@@ -1,52 +1,58 @@
-import pandas as pd
 import streamlit as st
 
+# Konfigurasi Halaman Utama
 st.set_page_config(
-    page_title="Tim P2PTM & Keswa - Dinkes Pangkep", page_icon="🫀", layout="wide"
+    page_title="Portal P2P Dinkes Pangkep", page_icon="🏥", layout="wide"
 )
 
-st.title("🫀 Tim Kerja P2PTM & Keswa")
-st.write(
-    "**Ketua Tim Kerja:** Hj. Sumarti Usman, SKM., M.Kes[cite: 5]"
-)  # Berdasarkan SK Tim Kerja[cite: 5]
+st.title("🏥 Portal Eksekutif Bidang P2P")
+st.subheader(
+    "Dinas Kesehatan Kabupaten Pangkep | Tahun 2026"
+)  # Berdasarkan SK Nomor 7842/Dinkes-PK/P2P/VI/2026
 
-# Pembagian Tab Program di bawah Tim P2PTM & Keswa
-tab_ptm, tab_haji, tab_keswa = st.tabs([
-    "📊 PTM (Hipertensi & DM / CKG)",
-    "🩺 Kesehatan Haji & Kanker",
-    "🧠 Kesehatan Jiwa & KTR",
-])
+st.markdown("""
+Selamat datang di Portal Dashboard Terintegrasi Bidang Pencegahan dan Pengendalian Penyakit (P2P). 
+Sistem ini dirancang untuk memantau capaian program dari 3 Tim Kerja secara *real-time* berdasarkan laporan dari seluruh Puskesmas di Kabupaten Pangkep.
+""")
 
-# --- TAB 1: PTM / CKG (Dashboard yang sudah Anda buat sebelumnya) ---
-with tab_ptm:
-  st.subheader("Monitoring Program Penyakit Tidak Menular (Hipertensi & DM)")
+st.markdown("---")
+
+# Kartu Navigasi / Menu Akses Cepat per Tim Kerja
+st.markdown("### 📂 Pilih Tim Kerja / Bidang Program:")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+  st.markdown("#### 🦠 1. Tim Kerja P2PM")
   st.write(
-      "**Penanggung Jawab:** Rosdiana Rahman, SKM[cite: 5]"
-  )  # Berdasarkan SK PJ Program[cite: 5]
+      "**Ketua:** Abd. Halim, SKM., M.Kes[cite: 5]"
+  )  # Berdasarkan SK Tim Kerja[cite: 5]
+  st.write("Mencakup: TBC, Kusta, DBD, Malaria, HIV, Diare, ISPA, dll.")
+  st.info("👉 Buka menu di sidebar kiri untuk mengakses halaman P2PM.")
 
-  # Di sini Anda bisa memasukkan kode pembacaan Google Sheets PTM dan grafik yang sudah kita buat sebelumnya!
+with col2:
+  st.markdown("#### 🫀 2. Tim Kerja P2PTM & Keswa")
+  st.write(
+      "**Ketua:** Hj. Sumarti Usman, SKM., M.Kes[cite: 5]"
+  )  # Berdasarkan SK Tim Kerja[cite: 5]
+  st.write(
+      "Mencakup: PTM (Hipertensi & DM), Kanker, Obesitas, Kesehatan Jiwa, & KTR"
+  )
+  st.info("👉 Buka menu di sidebar kiri untuk mengakses halaman P2PTM & Keswa.")
+
+with col3:
+  st.markdown("#### 📈 3. Tim Kerja Surveilans & Imunisasi")
+  st.write(
+      "**Ketua:** Muhammad Anas, SKM., M.Kes[cite: 5]"
+  )  # Berdasarkan SK Tim Kerja[cite: 5]
+  st.write("Mencakup: Data Surveilans Penyakit & Cakupan Imunisasi")
   st.info(
-      "*(Modul grafik CKG Hipertensi dan DM yang sudah kita buat sebelumnya"
-      " dapat ditempatkan di tab ini)*"
+      "👉 Buka menu di sidebar kiri untuk mengakses halaman Surveilans &"
+      " Imunisasi."
   )
 
-# --- TAB 2: KESEHATAN HAJI & KANKER ---
-with tab_haji:
-  st.subheader("Monitoring Kesehatan Haji, Indera, Kanker, dan Obesitas")
-  st.write(
-      "**Penanggung Jawab:** Ernawati, SKM[cite: 5]"
-  )  # Berdasarkan SK PJ Program[cite: 5]
-  st.write(
-      "Area untuk menghubungkan Google Sheets laporan pemeriksaan kesehatan"
-      " jemaah haji dan deteksi dini kanker."
-  )
-
-# --- TAB 3: KESEHATAN JIWA & KTR ---
-with tab_keswa:
-  st.subheader("Monitoring Kesehatan Jiwa & Kawasan Tanpa Rokok (KTR)")
-  st.write(
-      "**Penanggung Jawab:** Hj. Sumarti Usman, SKM., M.Kes[cite: 5]"
-  )  # Berdasarkan SK PJ Program[cite: 5]
-  st.write(
-      "Area untuk rekapitulasi data ODMK/ODGJ dan pemantauan indikator KTR."
-  )
+st.markdown("---")
+st.caption(
+    "💡 *Tips:* Gunakan menu navigasi di sebelah kiri layar Anda untuk berpindah"
+    " antar halaman Tim Kerja."
+)
