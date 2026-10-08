@@ -27,7 +27,7 @@ with col1:
   st.write(
       "**Ketua Tim:** Abd. Halim, SKM., M.Kes"
   )  # Berdasarkan SK Tim Kerja[cite: 5]
-  st.write("Mencakup: TBC, Kusta, DBD, Malaria, HIV, Diare, ISPA, dll.")
+  st.write("Program: TBC, Kusta, DBD, Malaria, HIV, Diare, ISPA, dll.")
   st.info("👉 Buka menu di sidebar kiri untuk mengakses halaman P2PM.")
 
 with col2:
@@ -36,7 +36,7 @@ with col2:
       "**Ketua Tim:** Hj. Sumarti Usman, SKM., M.Kes"
   )  # Berdasarkan SK Tim Kerja[cite: 5]
   st.write(
-      "Mencakup: PTM (Hipertensi & DM), Kanker, Obesitas, Kesehatan Jiwa, & KTR"
+      "Program: PTM (Hipertensi & DM), Kanker, Obesitas, Kesehatan Jiwa, & KTR"
   )
   st.info("👉 Buka menu di sidebar kiri untuk mengakses halaman P2PTM & Keswa.")
 
@@ -45,7 +45,7 @@ with col3:
   st.write(
       "**Ketua Tim:** Muhammad Anas, SKM., M.Kes"
   )  # Berdasarkan SK Tim Kerja[cite: 5]
-  st.write("Mencakup: Data Surveilans Penyakit & Cakupan Imunisasi")
+  st.write("Program: Data Surveilans Penyakit & Cakupan Imunisasi")
   st.info(
       "👉 Buka menu di sidebar kiri untuk mengakses halaman Surveilans &"
       " Imunisasi."
