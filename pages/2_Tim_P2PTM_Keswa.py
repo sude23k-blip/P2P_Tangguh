@@ -9,7 +9,7 @@ st.set_page_config(
 
 st.title("🫀 Tim Kerja P2PTM & Keswa")
 st.write(
-    "**Ketua Tim Kerja:** Hj. Sumarti Usman, SKM., M.Kes[cite: 5]"
+    "**Ketua Tim Kerja:** Hj. Sumarti Usman, SKM., M.Kes"
 )  # Berdasarkan SK Tim Kerja[cite: 5]
 st.markdown("---")
 
@@ -27,7 +27,7 @@ pilih_program = st.sidebar.radio(
 if pilih_program == "📊 PTM (Hipertensi & DM)":
   st.subheader("Monitoring Program Penyakit Tidak Menular (Hipertensi & DM)")
   st.write(
-      "**Penanggung Jawab Program:** Rosdiana Rahman, SKM[cite: 5]"
+      "**Penanggung Jawab Program:** Rosdiana Rahman, SKM"
   )  # Berdasarkan SK PJ[cite: 5]
 
   # File atau Google Sheets khusus PTM
@@ -44,7 +44,7 @@ if pilih_program == "📊 PTM (Hipertensi & DM)":
 elif pilih_program == "🩺 Kes. Haji, Indera, Kanker & Obesitas":
   st.subheader("Monitoring Kesehatan Haji, Indera, Kanker, dan Obesitas")
   st.write(
-      "**Penanggung Jawab Program:** Ernawati, SKM[cite: 5]"
+      "**Penanggung Jawab Program:** Ernawati, SKM"
   )  # Berdasarkan SK PJ[cite: 5]
 
   # File atau Google Sheets khusus Haji/Kanker
@@ -64,7 +64,7 @@ elif pilih_program == "🩺 Kes. Haji, Indera, Kanker & Obesitas":
 elif pilih_program == "🧠 Keswa & KTR":
   st.subheader("Monitoring Kesehatan Jiwa & Kawasan Tanpa Rokok (KTR)")
   st.write(
-      "**Penanggung Jawab Program:** Hj. Sumarti Usman, SKM., M.Kes[cite: 5]"
+      "**Penanggung Jawab Program:** Hj. Sumarti Usman, SKM., M.Kes"
   )  # Berdasarkan SK PJ[cite: 5]
 
   uploaded_file_keswa = st.file_uploader(
