@@ -105,8 +105,19 @@ if pilih_program == "🐛 POPM Kecacingan":
           "POPM_Cacing_Pct",
       ][: df_clean.shape[1]]
 
+      # Bersihkan baris yang bukan nomor puskesmas yang valid
       df_clean["NO"] = pd.to_numeric(df_clean["NO"], errors="coerce")
       df = df_clean.dropna(subset=["NO"]).copy()
+
+      # Fungsi pembersih data string angka / error Excel (#DIV/0!, koma, dll)
+      def clean_numeric(val):
+        if pd.isna(val) or str(val).strip() in ["", "-", "#DIV/0!", "nan"]:
+          return 0.0
+        val_str = str(val).replace(",", ".").replace(" ", "")
+        try:
+          return float(val_str)
+        except:
+          return 0.0
 
       numeric_cols = [
           "Total_Sasaran",
@@ -121,9 +132,7 @@ if pilih_program == "🐛 POPM Kecacingan":
       ]
       for col in numeric_cols:
         if col in df.columns:
-          df[col] = (
-              df[col].astype(str).str.replace(",", ".").astype(float)
-          )
+          df[col] = df[col].apply(clean_numeric)
 
       st.markdown(f"### 📌 Ringkasan Indikator Utama - {pilih_periode}")
 
