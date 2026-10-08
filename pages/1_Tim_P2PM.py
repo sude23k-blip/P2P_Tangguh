@@ -105,15 +105,16 @@ if pilih_program == "🐛 POPM Kecacingan":
           "POPM_Cacing_Pct",
       ][: df_clean.shape[1]]
 
-      # Bersihkan baris yang bukan nomor puskesmas yang valid
       df_clean["NO"] = pd.to_numeric(df_clean["NO"], errors="coerce")
       df = df_clean.dropna(subset=["NO"]).copy()
 
-      # Fungsi pembersih data string angka / error Excel (#DIV/0!, koma, dll)
+      # FUNGSI PEMBERSIH ANGKA (Titik sebagai pemisah ribuan dihilangkan)
       def clean_numeric(val):
         if pd.isna(val) or str(val).strip() in ["", "-", "#DIV/0!", "nan"]:
           return 0.0
-        val_str = str(val).replace(",", ".").replace(" ", "")
+        val_str = (
+            str(val).replace(".", "").replace(",", ".").replace(" ", "")
+        )
         try:
           return float(val_str)
         except:
