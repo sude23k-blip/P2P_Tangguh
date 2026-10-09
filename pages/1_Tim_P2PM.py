@@ -7,7 +7,7 @@ st.set_page_config(
 )
 
 st.title("🦠 Tim Kerja P2 Penyakit Menular (P2PM)")
-st.write("**Ketua Tim Kerja:** Halim, SKM., M.Kes")
+st.write("**Ketua Tim Kerja:** Abd. Halim, SKM., M.Kes")
 st.markdown("---")
 
 pilih_program = st.sidebar.radio(
