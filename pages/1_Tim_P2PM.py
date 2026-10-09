@@ -1,290 +1,101 @@
-import pandas as pd
-import plotly.express as px
-import streamlit as st
-
-st.set_page_config(
-    page_title="Tim P2PM - Dinkes Pangkep", page_icon="🦠", layout="wide"
-)
-
-st.title("🦠 Tim Kerja P2 Penyakit Menular (P2PM)")
-st.write("**Ketua Tim Kerja:** Halim, SKM., M.Kes")
-st.markdown("---")
-
-pilih_program = st.sidebar.radio(
-    "Pilih Program Kerja P2PM:",
-    [
-        "🐛 POPM Kecacingan",
-        "🦟 Malaria, DBD & Filariasis",
-        "🩺 Tuberkulosis & Kusta",
-        "💉 Diare & HIV",
-    ],
-)
-
-if pilih_program == "🐛 POPM Kecacingan":
-  st.subheader(
-      "📊 Analisis Indikator Penting POPM Kecacingan - Kabupaten Pangkep"
-  )
-  st.write(
-      "Analisis mendalam cakupan sasaran, pemberian obat, kelompok umur, dan"
-      " identifikasi Puskesmas dengan capaian terendah."
-  )
+# --- PROGRAM TUBERKULOSIS (TB) & KUSTA ---
+elif pilih_program == "🩺 Tuberkulosis & Kusta":
+  st.subheader("📊 Dashboard Monitoring Tuberkulosis (TBC) & Kusta")
+  st.write("**Penanggung Jawab Program:** Muhammad Asdar, SKM., M.Kes")
   st.markdown("---")
 
-  SPREADSHEET_ID = "1kqVS5KJX-BwmVw9AJ6ysrRaLooxO7qgYmpH4v57agWE"
-  GID_PANGKEP = "657728817"
-  url_sheets = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/export?format=csv&gid={GID_PANGKEP}"
+  # Masukkan Spreadsheet ID Google Sheets TB Dashboard Anda di sini
+  # Contoh: Ambil ID dari link Google Sheets TB Anda
+  spreadsheet_id_tb = st.text_input(
+      "🔗 Masukkan Spreadsheet ID Google Sheets TB Dashboard:",
+      value="",
+      placeholder="Contoh: 1X... (Ambil dari URL Google Sheets TB)",
+  )
 
-
-  @st.cache_data(ttl=600)
-  def load_popm_data(url):
-    df_raw = pd.read_csv(url, header=None)
-    return df_raw
-
-
-  try:
-    df_full = load_popm_data(url_sheets)
-
-    pilih_periode = st.selectbox(
-        "Pilih Periode Analisis:",
-        ["Periode I Tahun 2026", "Periode II Tahun 2026"],
+  if spreadsheet_id_tb:
+    url_sheets_tb = (
+        f"https://docs.google.com/spreadsheets/d/{spreadsheet_id_tb}/export?format=csv"
     )
 
-    idx_p1 = df_full[
-        df_full.apply(
-            lambda row: row.astype(str).str.contains("PERIODE I TAHUN").any(),
-            axis=1,
-        )
-    ].index
-    idx_p2 = df_full[
-        df_full.apply(
-            lambda row: row.astype(str).str.contains("PERIODE II TAHUN").any(),
-            axis=1,
-        )
-    ].index
 
-    if not idx_p1.empty and not idx_p2.empty:
-      row_p1 = idx_p1[0]
-      row_p2 = idx_p2[0]
+    @st.cache_data(ttl=600)
+    def load_tb_data(url):
+      # Berdasarkan gambar, header tabel TB dimulai sekitar baris ke-4 (skiprows=3 atau 4)
+      df_raw = pd.read_csv(url, skiprows=3, header=None)
+      return df_raw
 
-      if pilih_periode == "Periode I Tahun 2026":
-        df_clean = df_full.iloc[row_p1 + 4 : row_p2 - 3].copy()
-      else:
-        df_clean = df_full.iloc[row_p2 + 4 :].copy()
 
-    if df_clean.shape[1] > 2:
-      df_clean = df_clean.dropna(subset=[df_clean.columns[1]])
-      df_clean.columns = [
-          "NO",
-          "PUSKESMAS",
-          "Pos_Jml",
-          "Pos_Dapat",
-          "TK_Jml",
-          "TK_Dapat",
-          "SD_Jml",
-          "SD_Dapat",
-          "Total_Sasaran",
-          "S1_4_Tot",
-          "S1_4_L",
-          "S1_4_P",
-          "S5_6_Tot",
-          "S5_6_L",
-          "S5_6_P",
-          "S7_12_Tot",
-          "S7_12_L",
-          "S7_12_P",
-          "Tot_Capaian",
-          "J_S1_4_Tot",
-          "J_S1_4_L",
-          "J_S1_4_P",
-          "J_S5_6_Tot",
-          "J_S5_6_L",
-          "J_S5_6_P",
-          "J_S7_12_Tot",
-          "J_S7_12_L",
-          "J_S7_12_P",
-          "POPM_Cacing_Pct",
-      ][: df_clean.shape[1]]
+    try:
+      df_full_tb = load_tb_data(url_sheets_tb)
 
-      df_clean["NO"] = pd.to_numeric(df_clean["NO"], errors="coerce")
-      df = df_clean.dropna(subset=["NO"]).copy()
+      # Membersihkan dan menamai ulang kolom sesuai struktur gambar
+      # Kolom: No, Fasyankes, Target Terduga, Terduga Sesuai Standar, % Penemuan Terduga, Estimasi Kasus, Notifikasi TBC, % Treatment Coverage
+      df_tb = df_full_tb.dropna(subset=[df_full_tb.columns[1]]).copy()
+      df_tb.columns = [
+          "No",
+          "Fasyankes",
+          "Target_Terduga_SPM",
+          "Terduga_Sesuai_Standar",
+          "Persen_Terduga_SPM",
+          "Estimasi_Kasus_TBC",
+          "Notifikasi_TBC",
+          "Persen_Treatment_Coverage",
+      ][: df_tb.shape[1]]
 
-      # FUNGSI PEMBERSIH ANGKA (Titik sebagai pemisah ribuan dihilangkan)
-      def clean_numeric(val):
-        if pd.isna(val) or str(val).strip() in ["", "-", "#DIV/0!", "nan"]:
+      # Filter baris valid (buang header teks dan pastikan kolom No berupa angka / baris puskesmas)
+      df_tb["No"] = pd.to_numeric(df_tb["No"], errors="coerce")
+      df_clean_tb = df_tb.dropna(subset=["No"]).copy()
+
+
+      # Fungsi pembersih angka / persentase
+      def clean_num(val):
+        if pd.isna(val) or str(val).strip() in ["", "-", "nan"]:
           return 0.0
         val_str = (
-            str(val).replace(".", "").replace(",", ".").replace(" ", "")
+            str(val)
+            .replace("%", "")
+            .replace(".", "")
+            .replace(",", ".")
+            .strip()
         )
         try:
           return float(val_str)
         except:
           return 0.0
 
-      numeric_cols = [
-          "Total_Sasaran",
-          "Tot_Capaian",
-          "POPM_Cacing_Pct",
-          "Pos_Jml",
-          "Pos_Dapat",
-          "TK_Jml",
-          "TK_Dapat",
-          "SD_Jml",
-          "SD_Dapat",
-      ]
-      for col in numeric_cols:
-        if col in df.columns:
-          df[col] = df[col].apply(clean_numeric)
 
-      st.markdown(f"### 📌 Ringkasan Indikator Utama - {pilih_periode}")
+      # Konversi kolom numerik utama
+      for col in [
+          "Target_Terduga_SPM",
+          "Terduga_Sesuai_Standar",
+          "Estimasi_Kasus_TBC",
+          "Notifikasi_TBC",
+      ]:
+        if col in df_clean_tb.columns:
+          df_clean_tb[col] = df_clean_tb[col].apply(
+              lambda x: float(
+                  str(x).replace(".", "").replace(",", ".").strip()
+              )
+              if str(x).strip() not in ["", "-", "nan"]
+              else 0.0
+          )
 
-      total_sasaran_kab = (
-          df["Total_Sasaran"].sum() if "Total_Sasaran" in df.columns else 0
-      )
-      total_capaian_kab = (
-          df["Tot_Capaian"].sum() if "Tot_Capaian" in df.columns else 0
-      )
-      avg_cakupan = (
-          (total_capaian_kab / total_sasaran_kab * 100)
-          if total_sasaran_kab > 0
+      st.success("✅ Berhasil terhubung live ke Google Sheets TB Dashboard!")
+
+      # --- 1. KARTU RINGKASAN INDIKATOR UTAMA TB ---
+      st.markdown("### 📌 Ringkasan Capaian TBC Kabupaten Pangkep")
+
+      tot_target_terduga = (
+          df_clean_tb["Target_Terduga_SPM"].sum()
+          if "Target_Terduga_SPM" in df_clean_tb.columns
           else 0
       )
-
-      best_pkm = (
-          df.loc[df["POPM_Cacing_Pct"].idxmax()]["PUSKESMAS"]
-          if not df.empty
-          else "-"
+      tot_terduga_standar = (
+          df_clean_tb["Terduga_Sesuai_Standar"].sum()
+          if "Terduga_Sesuai_Standar" in df_clean_tb.columns
+          else 0
       )
-      best_pct = (
-          df["POPM_Cacing_Pct"].max() if not df.empty else 0
-      )
-      low_pkm = (
-          df.loc[df["POPM_Cacing_Pct"].idxmin()]["PUSKESMAS"]
-          if not df.empty
-          else "-"
-      )
-      low_pct = (
-          df["POPM_Cacing_Pct"].min() if not df.empty else 0
-      )
-
-      m1, m2, m3, m4 = st.columns(4)
-      with m1:
-        st.metric("Total Sasaran Anak", f"{int(total_sasaran_kab):,}")
-      with m2:
-        st.metric("Total Anak Minum Obat", f"{int(total_capaian_kab):,}")
-      with m3:
-        st.metric(
-            "Cakupan Kabupaten",
-            f"{avg_cakupan:.2f}%",
-            delta="Target 100%",
-            delta_color="off",
-        )
-      with m4:
-        st.metric(
-            "Cakupan Tertinggi", f"{best_pct:.1f}%", delta=f"{best_pkm}"
-        )
-
-      st.markdown("---")
-
-      st.markdown(
-          "### 🏫 Analisis Cakupan Berdasarkan Tempat Pelaksanaan (Fasilitas)"
-      )
-      col_f1, col_f2, col_f3 = st.columns(3)
-
-      with col_f1:
-        pos_sas = df["Pos_Jml"].sum() if "Pos_Jml" in df.columns else 0
-        pos_cap = df["Pos_Dapat"].sum() if "Pos_Dapat" in df.columns else 0
-        pos_pct = (pos_cap / pos_sas * 100) if pos_sas > 0 else 0
-        st.metric(
-            "Sasaran Posyandu (1-6 Tahun)",
-            f"{int(pos_cap):,} / {int(pos_sas):,}",
-            delta=f"{pos_pct:.1f}%",
-        )
-
-      with col_f2:
-        tk_sas = df["TK_Jml"].sum() if "TK_Jml" in df.columns else 0
-        tk_cap = df["TK_Dapat"].sum() if "TK_Dapat" in df.columns else 0
-        tk_pct = (tk_cap / tk_sas * 100) if tk_sas > 0 else 0
-        st.metric(
-            "Sasaran TK / PAUD",
-            f"{int(tk_cap):,} / {int(tk_sas):,}",
-            delta=f"{tk_pct:.1f}%",
-        )
-
-      with col_f3:
-        sd_sas = df["SD_Jml"].sum() if "SD_Jml" in df.columns else 0
-        sd_cap = df["SD_Dapat"].sum() if "SD_Dapat" in df.columns else 0
-        sd_pct = (sd_cap / sd_sas * 100) if sd_sas > 0 else 0
-        st.metric(
-            "Sasaran SD / MI (7-12 Tahun)",
-            f"{int(sd_cap):,} / {int(sd_sas):,}",
-            delta=f"{sd_pct:.1f}%",
-        )
-
-      st.markdown("---")
-
-      st.markdown("### ⚠️ Evaluasi & Puskesmas Perlu Perhatian Khusus")
-      st.write(
-          f"Berdasarkan data {pilih_periode}, Puskesmas dengan capaian terendah"
-          f" yang memerlukan intervensi adalah **{low_pkm}** dengan cakupan"
-          f" sebesar **{low_pct:.2f}%**."
-      )
-
-      df_warning = df[df["POPM_Cacing_Pct"] < 95.0].sort_values(
-          by="POPM_Cacing_Pct", ascending=True
-      )
-      if not df_warning.empty:
-        st.warning(
-            f"Terdapat {len(df_warning)} Puskesmas dengan cakupan di bawah target"
-            " min. 95%:"
-        )
-        st.dataframe(
-            df_warning[
-                ["PUSKESMAS", "Total_Sasaran", "Tot_Capaian", "POPM_Cacing_Pct"]
-            ],
-            use_container_width=True,
-        )
-      else:
-        st.success(
-            "🎉 Seluruh Puskesmas di Kabupaten Pangkep mencapai cakupan di atas"
-            " 95% pada periode ini."
-        )
-
-      st.markdown("---")
-      st.subheader("📈 Grafik Peringkat Cakupan POPM Kecacingan Per Puskesmas")
-      df_sorted = df.sort_values(by="POPM_Cacing_Pct", ascending=False)
-
-      fig = px.bar(
-          df_sorted,
-          x="PUSKESMAS",
-          y="POPM_Cacing_Pct",
-          text=df_sorted["POPM_Cacing_Pct"].apply(lambda x: f"{x:.2f}%"),
-          color="POPM_Cacing_Pct",
-          color_continuous_scale="Tealgrn",
-      )
-      fig.update_traces(textposition="outside")
-      fig.update_layout(
-          xaxis_tickangle=-45,
-          height=480,
-          yaxis_title="Cakupan (%)",
-          yaxis_ticksuffix="%",
-          xaxis={"categoryorder": "total descending"},
-      )
-      st.plotly_chart(fig, use_container_width=True)
-
-  except Exception as e:
-    st.error(f"Gagal memproses analisis indikator POPM Kecacingan: {e}")
-
-elif pilih_program == "🦟 Malaria, DBD & Filariasis":
-  st.subheader("Monitoring Program Malaria, DBD, dan Filariasis")
-  st.write("**Penanggung Jawab Program:** Abdul Halim, SKM., M.Kes")
-  st.info("Modul laporan siap dihubungkan ke Google Sheets.")
-
-elif pilih_program == "🩺 Tuberkulosis & Kusta":
-  st.subheader("Monitoring Program Tuberkulosis & Kusta")
-  st.write("**Penanggung Jawab Program:** Muhammad Asdar, SKM., M.Kes")
-  st.info("Modul laporan siap dihubungkan ke Google Sheets.")
-
-elif pilih_program == "💉 Diare & HIV":
-  st.subheader("Monitoring Program Diare & HIV")
-  st.write("**Penanggung Jawab Program:** Marliati, SKM")
-  st.info("Modul laporan siap dihubungkan ke Google Sheets.")
+      tot_estimasi = (
+          df_clean_tb["Estimasi_Kasus_TBC"].sum()
+          if "Estimasi_Kasus_TBC" in df_clean_tb.columns
+          else
